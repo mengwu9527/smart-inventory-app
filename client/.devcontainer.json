@@ -1,0 +1,27 @@
+{
+  "name": "智慧记AI进销存",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu-22.04",
+  "features": {
+    "ghcr.io/devcontainers/features/java:1": {
+      "version": "17",
+      "installMaven": true,
+      "installGradle": true
+    },
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "20"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-java.vscode-java-pack",
+        "esbenp.prettier-vscode"
+      ]
+    }
+  },
+  "postCreateCommand": "npm install -g pnpm expo-cli && cd /workspace/projects && pnpm install",
+  "remoteEnv": {
+    "JAVA_HOME": "/usr/local/sdkman/candidates/java/current",
+    "PATH": "${containerEnv:PATH}:/usr/local/sdkman/candidates/java/current/bin"
+  }
+}
