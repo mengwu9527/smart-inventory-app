@@ -14,6 +14,15 @@
         "gradleCommand": ":app:assembleDebug"
       }
     },
+    "release": {
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      },
+      "cache": {
+        "paths": []
+      }
+    },
     "production": {
       "android": {
         "buildType": "apk"
