@@ -38,10 +38,14 @@ jobs:
       - name: Fix Kotlin version for Expo SDK 54
         working-directory: ./client/android
         run: |
+          # Add Kotlin version to gradle.properties
           echo "" >> gradle.properties
           echo "# Kotlin version for Expo SDK 54 (requires Kotlin 2.0.0+)" >> gradle.properties
           echo "kotlin.version=2.0.0" >> gradle.properties
           echo "kotlin.code.style=official" >> gradle.properties
+          
+          # Also update build.gradle to specify Kotlin version explicitly
+          sed -i "s/classpath('org.jetbrains.kotlin:kotlin-gradle-plugin')/classpath('org.jetbrains.kotlin:kotlin-gradle-plugin:2.0.0')/" build.gradle
 
       - name: Build Release APK
         working-directory: ./client/android
