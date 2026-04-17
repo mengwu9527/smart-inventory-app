@@ -35,6 +35,14 @@ jobs:
         working-directory: ./client
         run: npx expo prebuild --platform android --clean
 
+      - name: Fix Kotlin version for Expo SDK 54
+        working-directory: ./client/android
+        run: |
+          echo "" >> gradle.properties
+          echo "# Kotlin version for Expo SDK 54 (requires Kotlin 2.0.0+)" >> gradle.properties
+          echo "kotlin.version=2.0.0" >> gradle.properties
+          echo "kotlin.code.style=official" >> gradle.properties
+
       - name: Build Release APK
         working-directory: ./client/android
         env:
