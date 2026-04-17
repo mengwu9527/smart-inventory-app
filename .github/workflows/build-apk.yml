@@ -29,20 +29,20 @@ jobs:
 
       - name: Install dependencies
         working-directory: ./client
-        run: npm install
+        run: npm install --legacy-peer-deps
 
       - name: Prebuild Android
         working-directory: ./client
         run: npx expo prebuild --platform android --clean
 
-      - name: Build Debug APK
+      - name: Build Release APK
         working-directory: ./client/android
         env:
           NODE_BINARY: /usr/bin/node
-        run: ./gradlew assembleDebug
+        run: ./gradlew assembleRelease
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: smart-inventory-app
-          path: client/android/app/build/outputs/apk/debug/app-debug.apk
+          path: client/android/app/build/outputs/apk/release/app-release.apk
