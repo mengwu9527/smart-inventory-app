@@ -31,9 +31,13 @@ jobs:
         working-directory: ./client
         run: npm install --legacy-peer-deps
 
+      - name: Remove old android directory
+        working-directory: ./client
+        run: rm -rf android
+
       - name: Prebuild Android
         working-directory: ./client
-        run: npx expo prebuild --platform android --clean
+        run: npx expo prebuild --platform android
 
       - name: Fix Kotlin version for Expo SDK 54
         working-directory: ./client/android
@@ -44,7 +48,7 @@ jobs:
           echo "kotlin.version=2.0.0" >> gradle.properties
           echo "kotlin.code.style=official" >> gradle.properties
           
-          # Also update build.gradle to specify Kotlin version explicitly
+          # Update build.gradle to specify Kotlin version explicitly
           sed -i "s/classpath('org.jetbrains.kotlin:kotlin-gradle-plugin')/classpath('org.jetbrains.kotlin:kotlin-gradle-plugin:2.0.0')/" build.gradle
 
       - name: Build Release APK
