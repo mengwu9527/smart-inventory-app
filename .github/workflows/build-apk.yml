@@ -31,34 +31,27 @@ jobs:
         working-directory: ./client
         run: npm install --legacy-peer-deps
 
-      - name: Remove old android directory
-        working-directory: ./client
-        run: rm -rf android
-
-      - name: Prebuild Android
-        working-directory: ./client
-        run: npx expo prebuild --platform android
-
-      - name: Fix Kotlin version for Expo SDK 54
+      - name: Create gradle.properties with Kotlin 2.0.0
         working-directory: ./client/android
         run: |
-          # Add Kotlin version to gradle.properties
-          echo "" >> gradle.properties
-          echo "# Kotlin version for Expo SDK 54 (requires Kotlin 2.0.0+)" >> gradle.properties
+          if [ -f gradle.properties ]; then
+            # Remove any existing kotlin.version line
+            sed -i '/kotlin\.version/d' gradle.properties
+            sed -i '/kotlin\.code\.style/d' gradle.properties
+          fi
+          # Add Kotlin version at the top of the file
           echo "kotlin.version=2.0.0" >> gradle.properties
           echo "kotlin.code.style=official" >> gradle.properties
-          
-          # Update build.gradle to specify Kotlin version explicitly
-          sed -i "s/classpath('org.jetbrains.kotlin:kotlin-gradle-plugin')/classpath('org.jetbrains.kotlin:kotlin-gradle-plugin:2.0.0')/" build.gradle
 
-      - name: Build Release APK
-        working-directory: ./client/android
+      - name: Build Release APK with Expo
+        working-directory: ./client
+        run: npx expo run:android --variant release --no-install
         env:
           NODE_BINARY: /usr/bin/node
-        run: ./gradlew assembleRelease
+          EXPO_NO_DOTENV: "1"
 
-      - name: Upload APK
+      - name: Find and upload APK
         uses: actions/upload-artifact@v4
         with:
           name: smart-inventory-app
-          path: client/android/app/build/outputs/apk/release/app-release.apk
+          path: client/android/app/build/outputs/apk/**/*.apk
