@@ -27,26 +27,31 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
+      - name: Create root package.json for Metro
+        run: |
+          echo '{"name":"smart-inventory-app","private":true}' > package.json
+
       - name: Install dependencies
         working-directory: ./client
-        run: npm install --legacy-peer-deps
+        run: |
+          npm install --legacy-peer-deps
+          npm install expo-modules-core@latest --save --legacy-peer-deps
 
       - name: Fix Kotlin version in Android config
         working-directory: ./client/android
         run: |
-          # Update gradle.properties
           if [ -f gradle.properties ]; then
             sed -i '/kotlin\.version/d' gradle.properties
             sed -i '/kotlin\.code\.style/d' gradle.properties
           fi
-          echo "kotlin.version=2.0.0" >> gradle.properties
+          echo "kotlin.version=2.0.21" >> gradle.properties
           echo "kotlin.code.style=official" >> gradle.properties
           
-          # Update build.gradle to specify Kotlin plugin version explicitly
           if [ -f build.gradle ]; then
-            sed -i "s/classpath('org.jetbrains.kotlin:kotlin-gradle-plugin')/classpath('org.jetbrains.kotlin:kotlin-gradle-plugin:2.0.0')/" build.gradle
-            echo "Updated build.gradle:"
-            grep -n "kotlin-gradle-plugin" build.gradle || echo "No kotlin-gradle-plugin found"
+            if ! grep -q "ext {" build.gradle; then
+              sed -i '/buildscript {/a\  ext {\n    kotlinVersion = "2.0.21"\n    kotlin_version = "2.0.21"\n  }' build.gradle
+            fi
+            sed -i "s/classpath('org.jetbrains.kotlin:kotlin-gradle-plugin')/classpath(\"org.jetbrains.kotlin:kotlin-gradle-plugin:2.0.21\")/" build.gradle
           fi
 
       - name: Build Release APK
