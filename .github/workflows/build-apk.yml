@@ -27,15 +27,12 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Create root package.json for Metro
-        run: |
-          echo '{"name":"smart-inventory-app","private":true}' > package.json
+      - name: Create symlink for Metro path
+        run: ln -s client/node_modules node_modules
 
       - name: Install dependencies
         working-directory: ./client
-        run: |
-          npm install --legacy-peer-deps
-          npm install expo-modules-core@latest --save --legacy-peer-deps
+        run: npm install --legacy-peer-deps
 
       - name: Fix Kotlin version in Android config
         working-directory: ./client/android
