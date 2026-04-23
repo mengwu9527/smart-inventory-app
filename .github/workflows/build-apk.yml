@@ -57,8 +57,25 @@ jobs:
           NODE_BINARY: /usr/bin/node
         run: ./gradlew assembleRelease
 
-      - name: Upload APK
+      - name: Upload APK as Artifact
         uses: actions/upload-artifact@v4
         with:
           name: smart-inventory-app-release
           path: client/android/app/build/outputs/apk/release/app-release.apk
+
+      - name: Create Release
+        if: github.event_name == 'workflow_dispatch'
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v1.0.${{ github.run_number }}
+          name: Smart Inventory App v1.0.${{ github.run_number }}
+          files: client/android/app/build/outputs/apk/release/app-release.apk
+          body: |
+            ## 智慧进销存 App
+            
+            本地离线版本，无需服务器
+            
+            ### 更新内容
+            - Release APK 构建版本
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
